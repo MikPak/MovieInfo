@@ -12,20 +12,18 @@ Date: 19.02.2015
 **/
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileNameParser {
     public FileNameParser() {
 
     }
 
-    /* List subfolders of a given folder, return ArrayList containing absolute 
-    path for each folder.*/
+    /*  getFolders(String directoryName) lists subfolders of a given folder, 
+        returns ArrayList containing absolute path for each subfolder.*/
     public static List<File> getFolders(String directoryName) {
         File directory = new File(directoryName); 
         List<File> resultList = new ArrayList<File>(); // Using ArrayList to store subfolders
@@ -33,7 +31,8 @@ public class FileNameParser {
         // List all files from folder
         File[] files = directory.listFiles();
         
-        /* FOR LATER USE! Filter results by the file extension (ex. .avi, .mp4 etc).
+        /*  FOR LATER USE! Filter results by the file extension 
+            (ex. .avi, .mp4 etc).
         File[] files = directory.listFiles(new FilenameFilter() {
             public boolean accept(File directory, String name) {
                 return name.toLowerCase().endsWith(".avi");
@@ -50,17 +49,38 @@ public class FileNameParser {
         return resultList;
     }
     
-    public static List<String> parseMovieNames(List <File>file) {
-        /*
-         for(int i = 0; file.iterator().hasNext(); i++) {
-             System.out.println(file.get(i));
-         } */
-         
-         for(File s : file) {
-             System.out.println(s.getName());
-         }
-         
-         return null;
+    /*  parseMovieNames(List <File>file) parses given ArrayList containing 
+        absolute folder paths. Movie folder names can sometimes be complicated, 
+        so we want to parse them before making any queries with them. In many cases
+        movie-folder names contain special characters we want to get rid of. Folder
+        names usually contain 4 number digit as showing release year of the movie,
+        so we are gonna use that in our advance.    */
+    public static List<String> parseMovieNames(List <File>folders) {
+        List<String> movieNames = new <String>ArrayList();
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); // Regex for special characters check
+        
+        /* Iterating through folders-list, checking if folder name
+           contains special characters or release year and parses them to most 
+           simple output.  */
+        for(File folder : folders) {
+            String name = folder.getName();
+            Matcher m = p.matcher(name);
+            boolean b = m.find();
+            
+            // Parsing string if name contains special characters
+            if(b) {
+                //System.out.println("Folder: \" " + name + "\" contains special characters.");
+                String parsed_name = name.replaceFirst( "\\d{4}.*", "" ).
+                        replaceAll( "[\\p{P}\\p{S}&&[^&']]+", " " );
+                //System.out.println("Parsed: " + result + " > " + parsed_name);
+                
+                // Add name to ArrayList
+                movieNames.add(parsed_name);
+            } else { // No special characters, check for year.
+                String parsed_name = name.replaceFirst( "\\d{4}.*", "" );
+                movieNames.add(parsed_name);
+            }
+        }
+        return movieNames;
     }
-    
 }

@@ -26,17 +26,26 @@ import java.util.List;
 
 public class main {
     public static void main(String args[]) {
-        String folderpath = "E:/W/testi/"; // Set path for a folder containing movies
+        String folderpath = "E:/W/Elokuvat/"; // Set path for a folder containing movies.
         FileNameParser parser = new FileNameParser();
-        List<File> filtered_folders = new ArrayList<File>(); // We want to store complete subfolder paths in ArrayList-container
+        List<File> sub_folders = new ArrayList<File>(); // We want to store complete subfolder paths in ArrayList-container.
+        List<String> movie_names = new ArrayList<String>(); // We want to store parsed folder names in ArrayList-container, too.
         
         // Get subfolders
-        filtered_folders = parser.getFolders(folderpath);
+        sub_folders = parser.getFolders(folderpath);
         
         // Print absolute subfolder paths from a given path
-        System.out.println(filtered_folders);
+        // System.out.println(sub_folders);
         
         // Print movie folder name only
-        parser.parseMovieNames(filtered_folders);
+        movie_names = parser.parseMovieNames(sub_folders);
+        
+        // Iterating through ArrayList
+        int i = 1;
+        for(String movie : movie_names) {
+            System.out.println("#"+ i + " " + movie);
+            i++;
+        }
+        
     }
 }
