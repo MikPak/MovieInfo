@@ -49,12 +49,12 @@ public class FileNameParser {
         return resultList;
     }
     
-    /*  parseMovieNames(List <File>file) parses given ArrayList containing 
+    /*  parseMovieNames(List <File>folders) parses given ArrayList containing 
         absolute folder paths. Movie folder names can sometimes be complicated, 
         so we want to parse them before making any queries with them. In many cases
         movie-folder names contain special characters we want to get rid of. Folder
-        names usually contain 4 number digit as showing release year of the movie,
-        so we are gonna use that in our advance.    */
+        names usually contain 4 number digit as release year of the movie, so we 
+        are gonna use that in our advance.    */
     public static List<String> parseMovieNames(List <File>folders) {
         List<String> movieNames = new <String>ArrayList();
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); // Regex for special characters check
