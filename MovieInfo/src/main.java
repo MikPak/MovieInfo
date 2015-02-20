@@ -15,7 +15,7 @@ Partially complete features:
 TODO:
 - Make a first GUI.
 - Make interactive GUI so it works with OMDb
-- Store fetched movie information in .xml or database and load info there.
+- Store fetched movie information in .xml or database and load info from there.
 
 
 Authors: Mikko Pakkanen, Mikko Tella 
@@ -23,7 +23,6 @@ Project started: 19.02.2015
 **/
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +52,10 @@ public class main {
             i++;}*/
         
         // Make query to OMDb
-
-            omdb.Query(folderpath, movie_names);
-
+        //omdb.Query(folderpath, movie_names);
+        
+        // Parse queries
+        //omdb.getXml();
         
         // Program runtime measure end.
         long stopTime = System.currentTimeMillis();
