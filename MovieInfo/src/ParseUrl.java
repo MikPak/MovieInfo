@@ -86,7 +86,7 @@ public class ParseUrl {
                                 movie.setMovieRated(child.getAttribute("rated")); // Movie rated.
                                 movie.setMovieReleased(child.getAttribute("released")); // Movie released.
                                 movie.setMovieRuntime(child.getAttribute("runtime")); // Movie runtime.
-                                movie.setMovieGenre(child.getAttribute("Thriller")); // Movie genre.
+                                movie.setMovieGenre(child.getAttribute("genre")); // Movie genre.
                                 movie.setMovieDirector(child.getAttribute("director")); // Movie director.
                                 movie.setMovieWriter(child.getAttribute("writer")); // Movie writer.
                                 movie.setMovieActors(child.getAttribute("actors")); // Movie actors.
