@@ -72,7 +72,7 @@ public class ParseUrl {
                         Element rootElement = document.getDocumentElement(); // Root element of DOM.
                         NodeList nodes = rootElement.getChildNodes(); // Get nodes.
 
-                        for(int i=0; i<nodes.getLength(); i++) {
+                        for(int i = 0; i < nodes.getLength(); i++) {
                             Node node = nodes.item(i);
                             MoviesIMDB movie = new MoviesIMDB(); // Creating object for each movie.
 
