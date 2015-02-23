@@ -20,10 +20,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 public class ParseUrl {
     public ParseUrl() {
@@ -31,22 +35,80 @@ public class ParseUrl {
     }
     
     /*  Query(String url, List<String> queries) is for making queries to a specified
-        URL and fetching query info. Fetched info will be stored in an ArrayList.
-        OMDb gives you two choises for the response, JSON or XML. We are going
-        to use XML for now.
+        URL and fetching query info. OMDb API gives you two choices for return data, XML
+        and JSON. We are going for the XML. We want to parse this response data from the
+        server and place it to ArrayList containing each query result as an object, in this
+        case, a movie.
     */
-    public List<String> Query(String url, List<String> queries) {
-        ArrayList<String> parsed_queries = new <String>ArrayList(); // We are gonna store parsed responses here.
+    public List<MoviesIMDB> Query(String url, List<String> queries) {
+        ArrayList<MoviesIMDB> responses = new <MoviesIMDB>ArrayList(); // We are gonna store successful queries here.
+        //int i = 0; // For debugging.
         
+        DocumentBuilderFactory builderFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = null;
+   
+        try {
+            builder = builderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();  
+        }
+        
+        // For-each query.
         for(String query : queries) {
             try{
-                query = URLEncoder.encode(query, "UTF-8"); // Encoding query for spaces.
-                URL omdb = new URL("http://www.omdbapi.com/?t=" + query + "&r=xml");
-                BufferedReader in = new BufferedReader(new InputStreamReader(omdb.openStream()));
+                query = URLEncoder.encode(query, "UTF-8"); // Encoding query for white-spaces.
+                URL omdb = new URL("http://www.omdbapi.com/?t=" + query + "&r=xml"); // Execute query, parameter r for XML-response.
+                BufferedReader in = new BufferedReader(new InputStreamReader(omdb.openStream())); // Reader for the stream.
                 
                 String inputLine;
                 while((inputLine = in.readLine()) != null) {
-                    System.out.println(inputLine);
+                    //responses.add(inputLine);
+                    //System.out.println("Added query response #"+i+" "+ parsed_queries.get(i));
+                    //i++;
+                    
+                    try {
+                        Document document = builder.parse(omdb.openStream()); // Build DOM-document.
+                        Element rootElement = document.getDocumentElement(); // Root element of DOM.
+                        NodeList nodes = rootElement.getChildNodes(); // Get nodes.
+
+                        for(int i=0; i<nodes.getLength(); i++) {
+                            Node node = nodes.item(i);
+                            MoviesIMDB movie = new MoviesIMDB(); // Creating object for each movie.
+
+                            if(node instanceof Element) {
+                                // A child element to process.
+                                Element child = (Element) node;
+                                
+                                // Set parsed nodes as object's attributes.
+                                movie.setMovieName(child.getAttribute("title")); // Movie title.
+                                movie.setMovieYear(child.getAttribute("year")); // Movie year.
+                                movie.setMovieRated(child.getAttribute("rated")); // Movie rated.
+                                movie.setMovieReleased(child.getAttribute("released")); // Movie released.
+                                movie.setMovieRuntime(child.getAttribute("runtime")); // Movie runtime.
+                                movie.setMovieGenre(child.getAttribute("Thriller")); // Movie genre.
+                                movie.setMovieDirector(child.getAttribute("director")); // Movie director.
+                                movie.setMovieWriter(child.getAttribute("writer")); // Movie writer.
+                                movie.setMovieActors(child.getAttribute("actors")); // Movie actors.
+                                movie.setMoviePlot(child.getAttribute("plot")); // Movie plot.
+                                movie.setMovieLanguage(child.getAttribute("language")); // Movie language.
+                                movie.setMovieCountry(child.getAttribute("country")); // Movie country.
+                                movie.setMovieAwards(child.getAttribute("awards")); // Movie awards.
+                                movie.setMoviePoster(child.getAttribute("poster")); // Movie poster.
+                                movie.setMovieMetascore(child.getAttribute("metascore")); // Movie metascore.
+                                movie.setMovieIMDBRating(child.getAttribute("imdbRating")); // Movie IMDB-Rating.
+                                movie.setMovieIMDBVotes(child.getAttribute("imdbvotes")); // Movie IMDB-Votes.
+                                movie.setMovieIMDBid(child.getAttribute("imdbID")); // Movie IMDB-ID.
+                                
+                                // Add object to ArrayList.
+                                responses.add(movie);
+                            }
+                        }   
+                    } catch (SAXException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (MalformedURLException e) {
                 System.out.println(e);
@@ -60,92 +122,6 @@ public class ParseUrl {
                 }
             }
         }
-        return parsed_queries;
+        return responses;
     }
-    /*
-    public void getXml(){
-        try {
-            // obtain and configure a SAX based parser
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-
-            // obtain object for SAX parser
-            SAXParser saxParser = saxParserFactory.newSAXParser();
-
-            // default handler for SAX handler class
-            // all three methods are written in handler's body
-            DefaultHandler defaultHandler = new DefaultHandler(){
-
-                String firstNameTag="close";
-                String lastNameTag="close";
-                String emailTag="close";
-                String phoneTag="close";
-
-             // this method is called every time the parser gets an open tag '<'
-             // identifies which tag is being open at time by assigning an open flag
-            public void startElement(String uri, String localName, String qName,
-               org.xml.sax.Attributes attributes) throws SAXException {
-
-                if (qName.equalsIgnoreCase("FIRSTNAME")) {
-                    firstNameTag = "open";
-                }
-                if (qName.equalsIgnoreCase("LASTNAME")) {
-                    lastNameTag = "open";
-                }
-                if (qName.equalsIgnoreCase("EMAIL")) {
-                    emailTag = "open";
-                }
-                if (qName.equalsIgnoreCase("PHONE")) {
-                    phoneTag = "open";
-                }
-             }
-
-            // prints data stored in between '<' and '>' tags
-            public void characters(char ch[], int start, int length)
-                throws SAXException {
-                
-                if (firstNameTag.equals("open")) {
-                    System.out.println("First Name : " + new String(ch, start, length));
-                }
-                if (lastNameTag.equals("open")) {
-                    System.out.println("Last Name : " + new String(ch, start, length));
-                }
-                if (emailTag.equals("open")) {
-                    System.out.println("Email : " + new String(ch, start, length));
-                }
-                if (phoneTag.equals("open")) {
-                    System.out.println("Phone : " + new String(ch, start, length));
-                }
-            }
-
-            // calls by the parser whenever '>' end tag is found in xml 
-            // makes tags flag to 'close'
-            public void endElement(String uri, String localName, String qName)
-                throws SAXException {
-
-                if (qName.equalsIgnoreCase("firstName")) {
-                    firstNameTag = "close";
-                }
-                if (qName.equalsIgnoreCase("lastName")) {
-                    lastNameTag = "close";
-                }
-                if (qName.equalsIgnoreCase("email")) {
-                    emailTag = "close";
-                }
-                if (qName.equalsIgnoreCase("phone")) {
-                    phoneTag = "close";
-                }
-            }
-            };
-
-            // parse the XML specified in the given path and uses supplied
-            // handler to parse the document
-            // this calls startElement(), endElement() and character() methods
-            // accordingly
-            saxParser.parse("xml/testi.xml", defaultHandler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            }
-    } */
 }
-
-

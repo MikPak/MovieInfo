@@ -39,24 +39,30 @@ public class main {
         // Get subfolders
         sub_folders = parser.getFolders(folderpath);
         
-        // Print absolute subfolder paths from a given path
+        // For debugging! Print absolute subfolder paths from a given path
         // System.out.println(sub_folders);
         
-        // Print movie folder name only
+        // Parsed movie-folders
         movie_names = parser.parseMovieNames(sub_folders);
         
-        /*// Iterating through ArrayList
+        /*// For debugging! Iterating through ArrayList
         int i = 1;
         for(String movie : movie_names) {
             System.out.println("#"+ i + " " + movie);
             i++;}*/
         
         // Make query to OMDb
-        //omdb.Query(folderpath, movie_names);
+        List<MoviesIMDB> parsed_responses = omdb.Query(folderpath, movie_names);
         
-        // Parse queries
-        //omdb.getXml();
-        
+        // Print parsed movie-info
+        for(MoviesIMDB movie : parsed_responses) {
+            System.out.print(movie.getMovieName() + " - ");
+            System.out.println(movie.getMovieYear());
+            System.out.println("------");
+            System.out.println(movie.getMoviePlot());
+            System.out.println();
+        }
+
         // Program runtime measure end.
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
