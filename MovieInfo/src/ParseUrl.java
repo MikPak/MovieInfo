@@ -42,7 +42,6 @@ public class ParseUrl {
     */
     public List<MoviesIMDB> Query(String url, List<String> queries) {
         ArrayList<MoviesIMDB> responses = new <MoviesIMDB>ArrayList(); // We are gonna store successful queries here.
-        //int i = 0; // For debugging.
         
         DocumentBuilderFactory builderFactory =
         DocumentBuilderFactory.newInstance();
@@ -61,12 +60,7 @@ public class ParseUrl {
                 URL omdb = new URL("http://www.omdbapi.com/?t=" + query + "&r=xml"); // Execute query, parameter r for XML-response.
                 BufferedReader in = new BufferedReader(new InputStreamReader(omdb.openStream())); // Reader for the stream.
                 
-                String inputLine;
-                while((inputLine = in.readLine()) != null) {
-                    //responses.add(inputLine);
-                    //System.out.println("Added query response #"+i+" "+ parsed_queries.get(i));
-                    //i++;
-                    
+                while(in.readLine() != null) {
                     try {
                         Document document = builder.parse(omdb.openStream()); // Build DOM-document.
                         Element rootElement = document.getDocumentElement(); // Root element of DOM.
