@@ -38,24 +38,26 @@ public class main {
         ParseUrl omdb = new ParseUrl();
         
         // Get subfolders
-        sub_folders = parser.getFolders(folderpath);
+        //sub_folders = parser.getFolders(folderpath);
         
         // For debugging! Print absolute subfolder paths from a given path
         // System.out.println(sub_folders);
         
         // Parsed movie-folders
-        movie_names = parser.parseMovieNames(sub_folders);
+        //movie_names = parser.parseMovieNames(sub_folders);
         
-        /*// For debugging! Iterating through ArrayList
+        // For debugging! Iterating through ArrayList 
+        /*
         int i = 1;
         for(String movie : movie_names) {
             System.out.println("#"+ i + " " + movie);
             i++;}*/
         
         // Make query to OMDb
-        List<MoviesIMDB> parsed_responses = omdb.Query(folderpath, movie_names);
+        //List<MoviesIMDB> parsed_responses = omdb.Query(folderpath, movie_names);
         
         // Print parsed movie-info
+        /*
         for(MoviesIMDB movie : parsed_responses) {
             System.out.print(movie.getMovieName() + " - ");
             System.out.println(movie.getMovieYear());
@@ -63,6 +65,11 @@ public class main {
             System.out.println(movie.getMoviePlot());
             System.out.println();
         }
+        */
+        
+        // Init GUI
+        MovieInfoGUI window = new MovieInfoGUI("MovieInfo");
+        window.setVisible(true);
 
         // Program runtime measure end.
         long stopTime = System.currentTimeMillis();
