@@ -24,8 +24,8 @@ public class FileNameParser {
 
     /*  getFolders(String directoryName) lists subfolders of a given folder, 
         returns ArrayList containing absolute path for each subfolder.*/
-    public static List<File> getFolders(String directoryName) {
-        File directory = new File(directoryName); 
+    public static List<File> getFolders(File directoryPath) {
+        File directory = directoryPath;
         List<File> resultList = new ArrayList<File>(); // Using ArrayList to store subfolders
         
         // List all files from folder

@@ -40,7 +40,7 @@ public class ParseUrl {
         server and place it to ArrayList containing each query result as an object, in this
         case, a movie.
     */
-    public List<MoviesIMDB> Query(String url, List<String> queries) {
+    public List<MoviesIMDB> Query(List<String> queries) {
         ArrayList<MoviesIMDB> responses = new <MoviesIMDB>ArrayList(); // We are gonna store successful queries here.
         
         DocumentBuilderFactory builderFactory =
