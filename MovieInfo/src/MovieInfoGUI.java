@@ -35,30 +35,32 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener {
+public class MovieInfoGUI implements ActionListener, ItemListener {
 
-    final private GridBagLayout layout = new GridBagLayout();
-    final private JList list = new JList();
-    JLabel c = new JLabel();
-    JTextArea textArea = new JTextArea();
+    private JFrame frame = new JFrame("MovieInfo");
+    private GridBagLayout layout = new GridBagLayout();
+    private JList list = new JList();
+    private JLabel c = new JLabel("Movie Name");
+    private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
+    private ExamplePane pane = new ExamplePane();
     
-    public MovieInfoGUI(String title) {
-        super(title);
+    
+    public MovieInfoGUI() {
         //setLayout(layout); // Set layout as GridBagLayout
-        setLayout(new BorderLayout()); // Use BorderLayout
-        add(new JScrollPane(list), BorderLayout.WEST);
-        add(new ExamplePane(), BorderLayout.CENTER);
-        add(createMenuBar(), BorderLayout.NORTH);
-        
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(700,600);
+        frame.setLayout(new BorderLayout()); // Use BorderLayout
+        frame.add(new JScrollPane(list), BorderLayout.WEST);
+        frame.add(pane, BorderLayout.CENTER);
+        frame.add(createMenuBar(), BorderLayout.NORTH);
+        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        frame.setSize(700,600);
+        frame.setResizable(false);
+        frame.setVisible(true);
     }
     
-    protected class ExamplePane extends JPanel {
+    public class ExamplePane extends JPanel {
         public ExamplePane() {
-            setLayout(layout);
+            //setLayout(layout);
             JPanel infoDisplayPane = new JPanel(new GridBagLayout());
-            JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
             GridBagConstraints gbc = new GridBagConstraints();
             
             //gbc.gridx = 0;
@@ -74,11 +76,19 @@ public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener
             
             //gbc.insets = new Insets(150, 100, 150, 100);
             //gbc.gridx++;
-            gbc.gridy = 1;
+            //gbc.gridy = 1;
             //gbc.fill = GridBagConstraints.BOTH;
-            addLabel("Movie Name", infoDisplayPane, 0);
-            JLabel c = addLabel("Plot", infoDisplayPane, 1);
+            addLabel(c, infoDisplayPane, 0);
+            addLabel("Plot", infoDisplayPane, 1);
             add(new JScrollPane(textArea), gbc);
+        }
+        
+        public void setTextMovieName(String text) {
+            c.setText(text);
+        }
+        
+        public void setTextMoviePlot(String text) {
+            textArea.setText(text);
         }
     }
     
@@ -151,7 +161,7 @@ public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener
         button.addActionListener(this);
         
         gd.setConstraints(button, c);
-        add(button);
+        frame.add(button);
         
         return button;
     }
@@ -161,7 +171,9 @@ public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener
         labelConstraints = new GridBagConstraints();
         
         // Määrittelyt label-komponentille
-        //labelConstraints.weightx = 0.0; // Label käyttää mahdollisimman vähän tilaa
+        labelConstraints.weightx = 0.0; // Label käyttää mahdollisimman vähän tilaa
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = 0;
         //labelConstraints.gridwidth = 1;
         labelConstraints.anchor = GridBagConstraints.WEST;
         labelConstraints.insets = new Insets(0, 0, 5, 185);
@@ -195,6 +207,7 @@ public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener
                     movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
 
                     List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
+                    
                     // For each result
                     for(MoviesIMDB movie : parsed_responses) {
                         System.out.print(movie.getMovieName() + " - ");
@@ -202,9 +215,8 @@ public class MovieInfoGUI extends JFrame implements ActionListener, ItemListener
                         System.out.println("------");
                         System.out.println(movie.getMoviePlot());
                         System.out.println();
-                        
-                        c.setText(movie.getMovieName());
-                        textArea.setText(movie.getMoviePlot());
+                        pane.setTextMovieName(movie.getMovieName());
+                        pane.setTextMoviePlot(movie.getMoviePlot());
                     }
                 }
             }

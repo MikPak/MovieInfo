@@ -23,23 +23,24 @@ Authors: Mikko Pakkanen, Mikko Tella
 Project started: 19.02.2015
 **/
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.EventQueue;
 import javax.swing.UIManager;
 
 public class main {
     public static void main(String args[]) {
         long startTime = System.currentTimeMillis(); // For measuring program runtime
         
-        // Init GUI
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-        }
-        
-        MovieInfoGUI window = new MovieInfoGUI("MovieInfo");
-        window.setVisible(true);
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception e) {
+                }
+                
+                MovieInfoGUI window = new MovieInfoGUI();
+            }
+        });
 
         // Program runtime measure end.
         long stopTime = System.currentTimeMillis();
