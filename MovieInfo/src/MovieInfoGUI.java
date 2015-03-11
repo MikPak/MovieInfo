@@ -94,7 +94,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     
     private JMenuBar createMenuBar() {
             JMenuBar menuBar;
-            JMenu menu, menu2;
+            JMenu menu, menu2, menu3;
             JMenuItem menuItem;
             JCheckBoxMenuItem cbMenuItem;
 
@@ -108,6 +108,15 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             // View-menu
             menu2 = new JMenu("View");
             menuBar.add(menu2);
+            
+            // Info-menu
+            menu3 = new JMenu("Info");
+            menuBar.add(menu3);
+            
+            // Info->About
+            menuItem = new JMenuItem("About");
+            menuItem.addActionListener(this);
+            menu3.add(menuItem);
 
             // File->Open
             menuItem = new JMenuItem("Open");
