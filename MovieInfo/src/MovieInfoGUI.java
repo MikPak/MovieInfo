@@ -39,16 +39,15 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
 
     private JFrame frame = new JFrame("MovieInfo");
     private GridBagLayout layout = new GridBagLayout();
-    private JList list = new JList();
+    private JList lista = new JList();
     private JLabel c = new JLabel("Movie Name");
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
     private ExamplePane pane = new ExamplePane();
     
-    
     public MovieInfoGUI() {
         //setLayout(layout); // Set layout as GridBagLayout
         frame.setLayout(new BorderLayout()); // Use BorderLayout
-        frame.add(new JScrollPane(list), BorderLayout.WEST);
+        frame.add(new JScrollPane(lista), BorderLayout.WEST);
         frame.add(pane, BorderLayout.CENTER);
         frame.add(createMenuBar(), BorderLayout.NORTH);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
@@ -216,7 +215,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                     movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
 
                     List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
-                    
+                    JList lista = new JList();
                     // For each result
                     for(MoviesIMDB movie : parsed_responses) {
                         System.out.print(movie.getMovieName() + " - ");
