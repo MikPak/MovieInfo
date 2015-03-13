@@ -31,9 +31,11 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JDialog;
 
 public class MovieInfoGUI implements ActionListener, ItemListener {
 
@@ -43,6 +45,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private JLabel c = new JLabel("Movie Name");
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
     private ExamplePane pane = new ExamplePane();
+    private JDialog dialog = new JDialog();
     
     public MovieInfoGUI() {
         //setLayout(layout); // Set layout as GridBagLayout
@@ -114,7 +117,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             
             // Info->About
             menuItem = new JMenuItem("About");
-            menuItem.addActionListener(this);
+            menuItem.addActionListener(this);              
             menu3.add(menuItem);
 
             // File->Open
@@ -134,7 +137,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             
             return menuBar;
     }
-    
+     
     /* 
         FileChooser() creates JFileChooser and returns folder path selected by user
     */
@@ -228,10 +231,12 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                     }
                 }
             }
+            if ("About".equals(command)){
+            JOptionPane.showMessageDialog(dialog, "MovieInfo is a simple movie-library tool for retrieving movie information from Internet Movie Database (IMDB.com) and showing this info in a neat and simple GUI.");
     }    
-    
+    }
     @Override
     public void itemStateChanged(ItemEvent e) {
         System.out.println(e);
-    }
+    }    
 }
