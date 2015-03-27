@@ -11,6 +11,7 @@ Date: 04.03.2015
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,9 +20,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -40,16 +45,25 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private JFrame frame = new JFrame("MovieInfo");
     private GridBagLayout layout = new GridBagLayout();
     private JList lista = new JList();
-    private JLabel c = new JLabel("Movie Name");
+    private JLabel JLabel = new JLabel("Movie Name");
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
     private ExamplePane pane = new ExamplePane();
-    
+    private DefaultListModel listModel = new DefaultListModel();
+    private JList list = new JList(listModel);
+
     public MovieInfoGUI() {
-        //setLayout(layout); // Set layout as GridBagLayout
         frame.setLayout(new BorderLayout()); // Use BorderLayout
-        frame.add(new JScrollPane(lista), BorderLayout.WEST);
-        frame.add(pane, BorderLayout.CENTER);
-        frame.add(createMenuBar(), BorderLayout.NORTH);
+        //frame.add(new JScrollPane(lista), BorderLayout.WEST); // Left-aligned JList for movie choosing
+        frame.add(pane, BorderLayout.CENTER); // Center panel, contains movie related info.
+        frame.add(createMenuBar(), BorderLayout.NORTH); // Menubar on the top of the window
+        
+        list.setVisibleRowCount(5);
+        JScrollPane leftList = new JScrollPane(list);
+        Dimension d = list.getPreferredSize();
+        d.width = 200;
+        leftList.setPreferredSize(d);
+        frame.add(leftList, BorderLayout.WEST); // Left-aligned JList for movie choosing
+        
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
         frame.setSize(700,600);
         frame.setResizable(false);
@@ -76,14 +90,14 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             //gbc.insets = new Insets(150, 100, 150, 100);
             //gbc.gridx++;
             //gbc.gridy = 1;
-            //gbc.fill = GridBagConstraints.BOTH;
-            addLabel(c, infoDisplayPane, 0);
+            gbc.fill = GridBagConstraints.BOTH;
+            addLabel(JLabel, infoDisplayPane, 0);
             addLabel("Plot", infoDisplayPane, 1);
             add(new JScrollPane(textArea), gbc);
         }
         
         public void setTextMovieName(String text) {
-            c.setText(text);
+            JLabel.setText(text);
         }
         
         public void setTextMoviePlot(String text) {
@@ -174,6 +188,9 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         return button;
     }
     
+    /* 
+        addLabel() creates JLabel
+    */
     private void addLabel(Component c, Container parent,int gridy) {
         GridBagConstraints labelConstraints = null;
         labelConstraints = new GridBagConstraints();
@@ -202,7 +219,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             
-            // If button called "Open" is pressed.
+            // If button called "Open" is pressed. (File->Open)
             if("Open".equals(command)) {
                 List<File> sub_folders = new ArrayList(); // We want to store complete subfolder paths in ArrayList-container.
                 List<String> movie_names = new ArrayList(); // We want to store parsed folder names in ArrayList-container.
@@ -218,17 +235,30 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                     JList lista = new JList();
                     // For each result
                     for(MoviesIMDB movie : parsed_responses) {
+                        // For debugging
                         System.out.print(movie.getMovieName() + " - ");
                         System.out.println(movie.getMovieYear());
                         System.out.println("------");
                         System.out.println(movie.getMoviePlot());
                         System.out.println();
-                        pane.setTextMovieName(movie.getMovieName());
-                        pane.setTextMoviePlot(movie.getMoviePlot());
+                        
+                        listModel.addElement(movie.getMovieName());
                     }
+                    list.addMouseListener(mouseListener);
                 }
             }
-    }    
+    }
+    
+    MouseListener mouseListener = new MouseAdapter() {
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 1) {
+           String selectedItem = (String) list.getSelectedValue();
+           System.out.println(selectedItem);
+           pane.setTextMovieName(selectedItem);
+           //pane.setTextMoviePlot(movie.getMoviePlot());
+         }
+    }
+};
     
     @Override
     public void itemStateChanged(ItemEvent e) {
