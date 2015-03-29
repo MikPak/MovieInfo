@@ -24,7 +24,7 @@ public class FileNameParser {
 
     /*  getFolders(String directoryName) lists subfolders of a given folder, 
         returns ArrayList containing absolute path for each subfolder.*/
-    public static List<File> getFolders(File directoryPath) {
+    public List<File> getFolders(File directoryPath) {
         File directory = directoryPath;
         List<File> resultList = new ArrayList<File>(); // Using ArrayList to store subfolders
         
@@ -55,7 +55,7 @@ public class FileNameParser {
         movie-folder names contain special characters we want to get rid of. Folder
         names usually contain 4 number digit as release year of the movie, so we 
         are gonna use that in our advance.    */
-    public static List<String> parseMovieNames(List <File>folders) {
+    public List<String> parseMovieNames(List <File>folders) {
         List<String> movieNames = new <String>ArrayList();
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE); // Regex for special characters check
         

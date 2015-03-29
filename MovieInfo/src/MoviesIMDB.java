@@ -1,3 +1,8 @@
+
+import java.awt.Component;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+
 /**
 MoviesIMDB-Class
 ------------------------
@@ -7,7 +12,7 @@ MoviesIMDB-Class is made purely for storing OMDb query-data.
 Authors: Mikko Pakkanen, Mikko Tella 
 Date: 23.02.2015
 **/
-public class MoviesIMDB {
+public class MoviesIMDB implements ListCellRenderer<Object> {
     private String movieName, movieYear, movieRated, movieReleased, movieRuntime,
             movieGenre, movieDirector, movieWriter, movieActors, moviePlot, 
             movieLanguage, movieCountry, movieAwards, moviePoster, movieMetascore,
@@ -159,5 +164,15 @@ public class MoviesIMDB {
 
     public void setMovieIMDBid(String movieIMDBid) {
         this.movieIMDBid = movieIMDBid;
+    }
+
+    @Override
+    public String toString() {
+        return this.movieName + " (" + this.movieYear + ")";
+    }
+
+    @Override
+    public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -43,36 +43,40 @@ import javax.swing.JTextArea;
 import javax.swing.JDialog;
 
 public class MovieInfoGUI implements ActionListener, ItemListener {
-
+    
+    // Main frame
     private JFrame frame = new JFrame("MovieInfo");
+    // Layouts
     private GridBagLayout layout = new GridBagLayout();
-    private JList lista = new JList();
-    private JLabel JLabel = new JLabel("Movie Name");
+    // Labels
+    private JLabel labelMovieName = new JLabel("Title");
+    // Text Areas
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
+    // Panels
     private ExamplePane pane = new ExamplePane();
-<<<<<<< HEAD
+    // List Models
     private DefaultListModel listModel = new DefaultListModel();
+    // Lists
     private JList list = new JList(listModel);
-
-=======
+    // Scroll Panes
+    private JScrollPane leftListScollPane = new JScrollPane(list);
+    // Dialogs
     private JDialog dialog = new JDialog();
     
->>>>>>> origin/master
     public MovieInfoGUI() {
         frame.setLayout(new BorderLayout()); // Use BorderLayout
-        //frame.add(new JScrollPane(lista), BorderLayout.WEST); // Left-aligned JList for movie choosing
         frame.add(pane, BorderLayout.CENTER); // Center panel, contains movie related info.
         frame.add(createMenuBar(), BorderLayout.NORTH); // Menubar on the top of the window
         
-        list.setVisibleRowCount(5);
-        JScrollPane leftList = new JScrollPane(list);
+        // Add scrollpane to the left
         Dimension d = list.getPreferredSize();
         d.width = 200;
-        leftList.setPreferredSize(d);
-        frame.add(leftList, BorderLayout.WEST); // Left-aligned JList for movie choosing
+        leftListScollPane.setPreferredSize(d);
+        frame.add(leftListScollPane, BorderLayout.WEST);
+        list.addMouseListener(mouseListener);
         
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setSize(700,600);
+        frame.setSize(500,600);
         frame.setResizable(false);
         frame.setVisible(true);
     }
@@ -83,28 +87,20 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             JPanel infoDisplayPane = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             
-            //gbc.gridx = 0;
-            //gbc.gridy = 0;
-            //gbc.fill = GridBagConstraints.RELATIVE;
-            // makeButton (display text, Layout type, cell span, height, width, row number, column number)
-            //buttonPane.add(makeButton(new JButton("Open"), layout, 1, 1, 1, 0, 1), gbc);
-            
-            //gbc.gridx = 0;
-            //gbc.gridy = 0;
-            //gbc.insets = new Insets(10, 10, 10, 80);
             add(infoDisplayPane, gbc);
+            addLabel(labelMovieName, infoDisplayPane, 0);
             
-            //gbc.insets = new Insets(150, 100, 150, 100);
-            //gbc.gridx++;
-            //gbc.gridy = 1;
-            gbc.fill = GridBagConstraints.BOTH;
-            addLabel(JLabel, infoDisplayPane, 0);
-            addLabel("Plot", infoDisplayPane, 1);
-            add(new JScrollPane(textArea), gbc);
+            Dimension d = textArea.getPreferredSize();
+            d.width = 270;
+            textArea.setPreferredSize(d);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+            add(textArea, gbc);
+            //addLabel(labelMoviePlot, infoDisplayPane, 1);
         }
         
         public void setTextMovieName(String text) {
-            JLabel.setText(text);
+            labelMovieName.setText(text);
         }
         
         public void setTextMoviePlot(String text) {
@@ -201,14 +197,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private void addLabel(Component c, Container parent,int gridy) {
         GridBagConstraints labelConstraints = null;
         labelConstraints = new GridBagConstraints();
-        
-        // Määrittelyt label-komponentille
-        labelConstraints.weightx = 0.0; // Label käyttää mahdollisimman vähän tilaa
-        labelConstraints.gridx = 0;
-        labelConstraints.gridy = 0;
-        //labelConstraints.gridwidth = 1;
-        labelConstraints.anchor = GridBagConstraints.WEST;
-        labelConstraints.insets = new Insets(0, 0, 5, 185);
+
         labelConstraints.gridy = gridy;
         
         GridBagLayout gbl = (GridBagLayout) parent.getLayout();
@@ -226,7 +215,12 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             
-            // If button called "Open" is pressed. (File->Open)
+            /* If button called "Open" is pressed. (File->Open)
+                - Gets subfolders of folder selected by the user
+                - Parses the folder names
+                - Makes query to OMDB and retrieve movie data
+                - Add MoviesIMDB objects to JList
+            */
             if("Open".equals(command)) {
                 List<File> sub_folders = new ArrayList(); // We want to store complete subfolder paths in ArrayList-container.
                 List<String> movie_names = new ArrayList(); // We want to store parsed folder names in ArrayList-container.
@@ -237,9 +231,8 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
 
                     sub_folders = parser.getFolders(folderPath); // Get subfolders of a given folder
                     movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
-
                     List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
-                    JList lista = new JList();
+                    
                     // For each result
                     for(MoviesIMDB movie : parsed_responses) {
                         // For debugging
@@ -249,33 +242,31 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                         System.out.println(movie.getMoviePlot());
                         System.out.println();
                         
-                        listModel.addElement(movie.getMovieName());
+                        listModel.addElement(movie);
                     }
                     list.addMouseListener(mouseListener);
                 }
             }
-<<<<<<< HEAD
+            
+            if ("About".equals(command)){
+                JOptionPane.showMessageDialog(dialog, 
+                        "MovieInfo is a simple movie-library tool for retrieving movie information from Internet Movie Database (IMDB.com) "
+                                + "and showing this info in a neat and simple GUI.");
+            }  
     }
     
     MouseListener mouseListener = new MouseAdapter() {
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1) {
-           String selectedItem = (String) list.getSelectedValue();
-           System.out.println(selectedItem);
-           pane.setTextMovieName(selectedItem);
-           //pane.setTextMoviePlot(movie.getMoviePlot());
+           MoviesIMDB movie = (MoviesIMDB)list.getSelectedValue();
+           pane.setTextMovieName(movie.getMovieName() + " (" + movie.getMovieYear() + ")");
+           pane.setTextMoviePlot(movie.getMoviePlot());
          }
     }
 };
     
-=======
-            if ("About".equals(command)){
-            JOptionPane.showMessageDialog(dialog, "MovieInfo is a simple movie-library tool for retrieving movie information from Internet Movie Database (IMDB.com) and showing this info in a neat and simple GUI.");
-    }    
-    }
->>>>>>> origin/master
     @Override
     public void itemStateChanged(ItemEvent e) {
         System.out.println(e);
-    }    
+    }
 }
