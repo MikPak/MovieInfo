@@ -52,6 +52,8 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private JLabel labelMovieName = new JLabel("Title");
     // Text Areas
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
+    // Text Area for actors and others
+    private JTextArea textActors = new JTextArea(10, 30);
     // Panels
     private ExamplePane pane = new ExamplePane();
     // List Models
@@ -92,11 +94,23 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             
             Dimension d = textArea.getPreferredSize();
             d.width = 270;
+            textArea.setEditable(false);
             textArea.setPreferredSize(d);
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
             add(textArea, gbc);
             //addLabel(labelMoviePlot, infoDisplayPane, 1);
+            
+            //text area for actors
+            Dimension o = textActors.getPreferredSize();
+            o.width = 270;
+            textActors.setEditable(false);
+            textActors.setPreferredSize(o);
+            textActors.setLineWrap(true);
+            textActors.setWrapStyleWord(true);
+            add(textActors, gbc);        
+                      
+                        
         }
         
         public void setTextMovieName(String text) {
@@ -105,6 +119,9 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         
         public void setTextMoviePlot(String text) {
             textArea.setText(text);
+        }
+        public void setTextMovieActors(String text){
+            textActors.setText(text);
         }
     }
     
@@ -149,6 +166,11 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             cbMenuItem.addActionListener(this);
             menu2.add(cbMenuItem);
             
+            // View->Actors
+            cbMenuItem = new JCheckBoxMenuItem("Actors");
+            cbMenuItem.addActionListener(this);
+            menu2.add(cbMenuItem);         
+                        
             return menuBar;
     }
      
@@ -261,6 +283,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
            MoviesIMDB movie = (MoviesIMDB)list.getSelectedValue();
            pane.setTextMovieName(movie.getMovieName() + " (" + movie.getMovieYear() + ")");
            pane.setTextMoviePlot(movie.getMoviePlot());
+           pane.setTextMovieActors(movie.getMovieActors());
          }
     }
 };
