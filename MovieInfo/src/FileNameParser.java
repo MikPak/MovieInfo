@@ -12,8 +12,15 @@ Date: 19.02.2015
 **/
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,12 +32,11 @@ public class FileNameParser {
     /*  getFolders(String directoryName) lists subfolders of a given folder, 
         returns ArrayList containing absolute path for each subfolder.*/
     public List<File> getFolders(File directoryPath) {
-        File directory = directoryPath;
         List<File> resultList = new ArrayList<File>(); // Using ArrayList to store subfolders
         
         // List all files from folder
-        File[] files = directory.listFiles();
-        
+        File[] files = directoryPath.listFiles();
+       
         /*  FOR LATER USE! Filter results by the file extension 
             (ex. .avi, .mp4 etc).
         File[] files = directory.listFiles(new FilenameFilter() {
@@ -47,6 +53,20 @@ public class FileNameParser {
         }
         
         return resultList;
+    }
+    
+    // Returns file from data-file
+    public File getFolderPathFromMemory() throws IOException, ClassNotFoundException {
+        File path2 = new File("default");
+
+        try {
+           FileInputStream fis = new FileInputStream("path.dat");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            path2 = (File)ois.readObject();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FileNameParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return path2;
     }
     
     /*  parseMovieNames(List <File>folders) parses given ArrayList containing 

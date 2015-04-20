@@ -12,10 +12,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,10 +22,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -50,10 +55,14 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private GridBagLayout layout = new GridBagLayout();
     // Labels
     private JLabel labelMovieName = new JLabel("Title");
+    private JLabel labelMovieActors = new JLabel("Actors");
+    private JLabel labelMovieGenre = new JLabel("Genre");
+    private JLabel labelMovieRuntime = new JLabel("Runtime");
+    private JLabel labelMovieDirector = new JLabel("Director");
     // Text Areas
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
     // Text Area for actors and others
-    private JTextArea textActors = new JTextArea(10, 30);
+    private JTextArea textActors = new JTextArea(5, 30);
     // Panels
     private ExamplePane pane = new ExamplePane();
     // List Models
@@ -90,8 +99,14 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             GridBagConstraints gbc = new GridBagConstraints();
             
             add(infoDisplayPane, gbc);
-            addLabel(labelMovieName, infoDisplayPane, 0);
             
+            // Movie title
+            addLabel(labelMovieName, infoDisplayPane, 0);
+            addLabel(labelMovieGenre, infoDisplayPane, 1);
+            addLabel(labelMovieRuntime, infoDisplayPane, 2);
+            addLabel(labelMovieDirector, infoDisplayPane, 3);
+            
+            // Movie plot
             Dimension d = textArea.getPreferredSize();
             d.width = 270;
             textArea.setEditable(false);
@@ -99,22 +114,33 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
             add(textArea, gbc);
-            //addLabel(labelMoviePlot, infoDisplayPane, 1);
             
-            //text area for actors
+            // Movie actors
+            add(labelMovieActors, gbc);
             Dimension o = textActors.getPreferredSize();
             o.width = 270;
             textActors.setEditable(false);
             textActors.setPreferredSize(o);
             textActors.setLineWrap(true);
             textActors.setWrapStyleWord(true);
-            add(textActors, gbc);        
-                      
-                        
+            add(textActors, gbc); 
+            //getFolderPathFromMemory();
         }
         
         public void setTextMovieName(String text) {
             labelMovieName.setText(text);
+        }
+        
+        public void setTextMovieRuntime(String text) {
+            labelMovieRuntime.setText(text);
+        }
+        
+        public void setTextMovieDirector(String text) {
+            labelMovieDirector.setText(text);
+        }
+        
+        public void setTextMovieGenre(String text) {
+            labelMovieGenre.setText(text);
         }
         
         public void setTextMoviePlot(String text) {
@@ -191,29 +217,6 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     }
     
     /* 
-        makeButton() creates buttons with specific attributes, also adds ActionListener
-        to every button. 
-    */
-    private JButton makeButton(JButton button, GridBagLayout gd, int gridwidth, int weightx, int weighty, int gridy, int gridx){
-        GridBagConstraints c = new GridBagConstraints();
-        
-        c.gridwidth = gridwidth;
-        c.weightx = weightx;
-        c.weighty = weighty;
-        c.gridx = gridx;
-        c.gridy = gridy;
-        //c.fill = GridBagConstraints.BOTH;
-        
-        button.setFont(new Font("monospaced", Font.PLAIN, 14));
-        button.addActionListener(this);
-        
-        gd.setConstraints(button, c);
-        frame.add(button);
-        
-        return button;
-    }
-    
-    /* 
         addLabel() creates JLabel
     */
     private void addLabel(Component c, Container parent,int gridy) {
@@ -225,12 +228,6 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         GridBagLayout gbl = (GridBagLayout) parent.getLayout();
         gbl.setConstraints(c, labelConstraints);
         parent.add(c);
-    }
-    
-    private JLabel addLabel(String s, Container parent, int gridy) {
-        JLabel c = new JLabel(s);
-        addLabel(c, parent, gridy);
-        return c;
     }
     
     @Override
@@ -249,24 +246,42 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
 
                 File folderPath = FileChooser(new JFileChooser()); // FileChooser for movie-folder
                 if(folderPath != null) {
-                    FileNameParser parser = new FileNameParser();
-
-                    sub_folders = parser.getFolders(folderPath); // Get subfolders of a given folder
-                    movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
-                    List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
-                    
-                    // For each result
-                    for(MoviesIMDB movie : parsed_responses) {
-                        // For debugging
-                        System.out.print(movie.getMovieName() + " - ");
-                        System.out.println(movie.getMovieYear());
-                        System.out.println("------");
-                        System.out.println(movie.getMoviePlot());
-                        System.out.println();
+                        FileNameParser parser = new FileNameParser();
+                        System.out.println(folderPath);
                         
-                        listModel.addElement(movie);
-                    }
-                    list.addMouseListener(mouseListener);
+                        try {
+                            FileOutputStream fout = new FileOutputStream("path.dat");
+                            ObjectOutputStream oos = new ObjectOutputStream(fout);
+                            oos.writeObject(folderPath);
+                            oos.close();
+                            fout.close();
+                        } catch (IOException ex) {
+                                Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                       /*// Print folder path to memory
+                        try {
+                            PrintWriter writer = new PrintWriter("path.txt", "UTF-8");
+                            writer.println(folderPath);
+                            writer.close();
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (UnsupportedEncodingException ex) {
+                            Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }*/
+                        
+                        // Iterate movies to JList
+                        sub_folders = parser.getFolders(folderPath); // Get subfolders of a given folder
+                        movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
+                        List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
+                        
+                        // For each result
+                        for(MoviesIMDB movie : parsed_responses) {
+                            if(!movie.getMovieIMDBid().isEmpty()) {
+                                listModel.addElement(movie);
+                            }
+                        }
+                        list.addMouseListener(mouseListener);
                 }
             }
             
@@ -282,6 +297,9 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         if (e.getClickCount() == 1) {
            MoviesIMDB movie = (MoviesIMDB)list.getSelectedValue();
            pane.setTextMovieName(movie.getMovieName() + " (" + movie.getMovieYear() + ")");
+           pane.setTextMovieRuntime(movie.getMovieRuntime());
+           pane.setTextMovieDirector(movie.getMovieDirector());
+           pane.setTextMovieGenre(movie.getMovieGenre());
            pane.setTextMoviePlot(movie.getMoviePlot());
            pane.setTextMovieActors(movie.getMovieActors());
          }
