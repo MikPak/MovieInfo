@@ -55,17 +55,15 @@ public class FileNameParser {
         return resultList;
     }
     
-    // Returns file from data-file
+    /* Returns File-object from data-file */
     public File getFolderPathFromMemory() throws IOException, ClassNotFoundException {
         File path2 = new File("default");
 
         try {
            FileInputStream fis = new FileInputStream("path.dat");
-            if(fis != null) {
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 path2 = (File)ois.readObject();
                 ois.close();
-            }
         } catch (FileNotFoundException ex) {
             return null;
         }

@@ -26,10 +26,7 @@ Project started: 19.02.2015
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.UIManager;
 
 public class main {
@@ -38,13 +35,24 @@ public class main {
         FileNameParser parser = new FileNameParser();
         File FolderPathMemory = parser.getFolderPathFromMemory();
         
-        // Check if folder exists in memory
+        /* 
+            Check if folder exists in memory and initialize JList with movie-data, if
+            it does. If not, then create plain GUI.
+        */
         if(FolderPathMemory != null) {
-            List<File> sub_folders = new ArrayList();
-            List<String> movie_names = new ArrayList();
+            List<File> sub_folders;
+            List<String> movie_names;
             
             sub_folders = parser.getFolders(parser.getFolderPathFromMemory());
             movie_names = parser.parseMovieNames(sub_folders);
+            List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
+            
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                MovieInfoGUI window = new MovieInfoGUI();
+                window.initializeJList(parsed_responses);
+            } catch (Exception e) {
+            }
         } else {
             EventQueue.invokeLater(new Runnable() {
                 @Override

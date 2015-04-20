@@ -230,6 +230,15 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         parent.add(c);
     }
     
+    public void initializeJList(List<MoviesIMDB> movieList) {
+        for(MoviesIMDB movie : movieList) {
+            if(!movie.getMovieIMDBid().isEmpty()) {
+                listModel.addElement(movie);
+            }
+        }
+        list.addMouseListener(mouseListener);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
@@ -249,6 +258,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                         FileNameParser parser = new FileNameParser();
                         System.out.println(folderPath);
                         
+                        // Write file-object to file, to read it from memory later
                         try {
                             FileOutputStream fout = new FileOutputStream("path.dat");
                             ObjectOutputStream oos = new ObjectOutputStream(fout);
@@ -258,37 +268,19 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                         } catch (IOException ex) {
                                 Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
-                       /*// Print folder path to memory
-                        try {
-                            PrintWriter writer = new PrintWriter("path.txt", "UTF-8");
-                            writer.println(folderPath);
-                            writer.close();
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnsupportedEncodingException ex) {
-                            Logger.getLogger(MovieInfoGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
-                        
-                        // Iterate movies to JList
                         sub_folders = parser.getFolders(folderPath); // Get subfolders of a given folder
                         movie_names = parser.parseMovieNames(sub_folders); // Parsed movie-folders
                         List<MoviesIMDB> parsed_responses = new ParseUrl().Query(movie_names); // Make a query to OMDb
-                        
-                        // For each result
-                        for(MoviesIMDB movie : parsed_responses) {
-                            if(!movie.getMovieIMDBid().isEmpty()) {
-                                listModel.addElement(movie);
-                            }
-                        }
-                        list.addMouseListener(mouseListener);
+                        initializeJList(parsed_responses);
                 }
             }
             
             if ("About".equals(command)){
                 JOptionPane.showMessageDialog(dialog, 
                         "MovieInfo is a simple movie-library tool for retrieving movie information from Internet Movie Database (IMDB.com) "
-                                + "and showing this info in a neat and simple GUI.");
+                                + "and showing this info in a neat and simple GUI.\n\n" +
+                                "Mikko Pakkanen & Mikko Tella\n" +
+                                "2015");
             }  
     }
     
