@@ -64,6 +64,7 @@ public class FileNameParser {
             if(fis != null) {
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 path2 = (File)ois.readObject();
+                ois.close();
             }
         } catch (FileNotFoundException ex) {
             return null;
