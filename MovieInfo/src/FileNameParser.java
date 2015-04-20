@@ -61,10 +61,12 @@ public class FileNameParser {
 
         try {
            FileInputStream fis = new FileInputStream("path.dat");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            path2 = (File)ois.readObject();
+            if(fis != null) {
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                path2 = (File)ois.readObject();
+            }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileNameParser.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return path2;
     }

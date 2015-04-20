@@ -38,13 +38,11 @@ public class main {
         FileNameParser parser = new FileNameParser();
         File FolderPathMemory = parser.getFolderPathFromMemory();
         
-        System.out.println(FolderPathMemory.getAbsolutePath());
-        //FolderPathMemory = "";
-        
         // Check if folder exists in memory
         if(FolderPathMemory != null) {
             List<File> sub_folders = new ArrayList();
             List<String> movie_names = new ArrayList();
+            
             sub_folders = parser.getFolders(parser.getFolderPathFromMemory());
             movie_names = parser.parseMovieNames(sub_folders);
         } else {
