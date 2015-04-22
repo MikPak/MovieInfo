@@ -21,6 +21,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +45,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JDialog;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 
 public class MovieInfoGUI implements ActionListener, ItemListener {
     
@@ -56,10 +67,11 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     private JLabel labelMovieGenre = new JLabel("Genre");
     private JLabel labelMovieRuntime = new JLabel("Runtime");
     private JLabel labelMovieDirector = new JLabel("Director");
-    // Text Areas
+    private JLabel picLabel = new JLabel(new ImageIcon("MovieInfo2.png"));    
+    // Text Areas for plot
     private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
-    // Text Area for actors and others
-    private JTextArea textActors = new JTextArea(5, 30);
+    // Text Area for actors
+    private JTextArea textActors = new JTextArea(4, 30);
     // Panels
     private ExamplePane pane = new ExamplePane();
     // List Models
@@ -103,15 +115,15 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             addLabel(labelMovieRuntime, infoDisplayPane, 2);
             addLabel(labelMovieDirector, infoDisplayPane, 3);
             
-            // Movie plot
+            // Movie plot            
             Dimension d = textArea.getPreferredSize();
             d.width = 270;
             textArea.setEditable(false);
             textArea.setPreferredSize(d);
             textArea.setLineWrap(true);
-            textArea.setWrapStyleWord(true);
-            add(textArea, gbc);
-            
+            textArea.setWrapStyleWord(true);            
+            add(textArea, gbc);      
+                        
             // Movie actors
             add(labelMovieActors, gbc);
             Dimension o = textActors.getPreferredSize();
@@ -121,9 +133,10 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             textActors.setLineWrap(true);
             textActors.setWrapStyleWord(true);
             add(textActors, gbc); 
-            //getFolderPathFromMemory();
+            //getFolderPathFromMemory();                       
+            add(picLabel);
         }
-        
+                
         public void setTextMovieName(String text) {
             labelMovieName.setText(text);
         }
@@ -162,8 +175,8 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             menuBar.add(menu);
             
             // View-menu
-            menu2 = new JMenu("View");
-            menuBar.add(menu2);
+           // menu2 = new JMenu("View");
+            //menuBar.add(menu2);
             
             // Info-menu
             menu3 = new JMenu("Info");
@@ -185,18 +198,18 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             menu.add(menuItem);
             
             // View->Plot
-            cbMenuItem = new JCheckBoxMenuItem("Plot");
-            cbMenuItem.addActionListener(this);
-            menu2.add(cbMenuItem);
+           // cbMenuItem = new JCheckBoxMenuItem("Plot");
+            //cbMenuItem.addActionListener(this);
+            //menu2.add(cbMenuItem);
             
             // View->Actors
-            cbMenuItem = new JCheckBoxMenuItem("Actors");
-            cbMenuItem.addActionListener(this);
-            menu2.add(cbMenuItem);         
+           // cbMenuItem = new JCheckBoxMenuItem("Actors");
+           // cbMenuItem.addActionListener(this);
+            //menu2.add(cbMenuItem);         
                         
             return menuBar;
     }
-     
+          
     /* 
         FileChooser() creates JFileChooser and returns folder path selected by user
     */
