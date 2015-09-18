@@ -1,6 +1,6 @@
 #MovieInfo - Simple movie-library tool
 ------------------------
-MovieInfo is a simple movie-library tool for retrieving movie information from
+MovieInfo is a very simple movie-library tool for retrieving movie information from
 Internet Movie Database (IMDB.com) and showing it in neat and simple GUI.
 
 MovieInfo uses OMDB-API ( http://www.omdbapi.com/ ) for querying IMDB.
