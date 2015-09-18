@@ -28,16 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class main {
     public static void main(String args[]) throws IOException, ClassNotFoundException {
-        long startTime = System.currentTimeMillis(); // For measuring program runtime
         FileNameParser parser = new FileNameParser();
         File FolderPathMemory = parser.getFolderPathFromMemory();
         
         /* 
-            Check if folder exists in memory and initialize JList with movie-data, if
-            it does. If not, then create plain GUI.
+            Check if path exists and initialize JList with movie-data. 
+            If not, create plain GUI.
         */
         if(FolderPathMemory != null) {
             List<File> sub_folders;
@@ -51,7 +51,7 @@ public class main {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 MovieInfoGUI window = new MovieInfoGUI();
                 window.initializeJList(parsed_responses);
-            } catch (Exception e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             }
         } else {
             EventQueue.invokeLater(new Runnable() {
@@ -59,17 +59,12 @@ public class main {
                 public void run() {
                     try {
                         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    } catch (Exception e) {
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
                     }
 
-                    MovieInfoGUI window = new MovieInfoGUI();
+                    new MovieInfoGUI();
                 }
             });
         }
-
-        // Program runtime measure end.
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println("Runtime: " + elapsedTime + "ms");
     }
 }

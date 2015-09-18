@@ -21,16 +21,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.Color;
-import java.awt.Font;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -45,43 +38,37 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JDialog;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 
 public class MovieInfoGUI implements ActionListener, ItemListener {
-    
     // Main frame
-    private JFrame frame = new JFrame("MovieInfo");
-    // Layouts
-    private GridBagLayout layout = new GridBagLayout();
+    private final JFrame frame = new JFrame("MovieInfo");
     // Labels
-    private JLabel labelMovieName = new JLabel("Title");
-    private JLabel labelMovieActors = new JLabel("Actors");
-    private JLabel labelMovieGenre = new JLabel("Genre");
-    private JLabel labelMovieRuntime = new JLabel("Runtime");
-    private JLabel labelMovieDirector = new JLabel("Director");
-    private JLabel picLabel = new JLabel(new ImageIcon("MovieInfo2.png"));    
+    private final JLabel labelMovieName = new JLabel("Title");
+    private final JLabel labelMovieActors = new JLabel("Actors");
+    private final JLabel labelMovieGenre = new JLabel("Genre");
+    private final JLabel labelMovieRuntime = new JLabel("Runtime");
+    private final JLabel labelMovieDirector = new JLabel("Director");
+    private final JLabel picLabel = new JLabel(new ImageIcon("logo.png"));    
     // Text Areas for plot
-    private JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
+    private final JTextArea textArea = new JTextArea(10, 30); // Rows, Columns
     // Text Area for actors
-    private JTextArea textActors = new JTextArea(4, 30);
+    private final JTextArea textActors = new JTextArea(4, 30);
     // Panels
     private ExamplePane pane = new ExamplePane();
     // List Models
-    private DefaultListModel listModel = new DefaultListModel();
+    private final DefaultListModel listModel = new DefaultListModel();
     // Lists
     private JList list = new JList(listModel);
     // Scroll Panes
-    private JScrollPane leftListScollPane = new JScrollPane(list);
+    private final JScrollPane leftListScollPane = new JScrollPane(list);
     // Dialogs
-    private JDialog dialog = new JDialog();
+    private final JDialog dialog = new JDialog();
     
     public MovieInfoGUI() {
         frame.setLayout(new BorderLayout()); // Use BorderLayout
@@ -210,8 +197,9 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
             return menuBar;
     }
           
-    /* 
-        FileChooser() creates JFileChooser and returns folder path selected by user
+    /*  
+        FileChooser() creates JFileChooser and returns folder path selected by 
+        user
     */
     private File FileChooser(JFileChooser j) {
         j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -226,9 +214,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         }
     }
     
-    /* 
-        addLabel() creates JLabel
-    */
+    /* addLabel() creates JLabel*/
     private void addLabel(Component c, Container parent,int gridy) {
         GridBagConstraints labelConstraints = null;
         labelConstraints = new GridBagConstraints();
@@ -240,6 +226,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
         parent.add(c);
     }
     
+    /* Initializes JList with objects */
     public void initializeJList(List<MoviesIMDB> movieList) {
         for(MoviesIMDB movie : movieList) {
             if(!movie.getMovieIMDBid().isEmpty()) {
@@ -260,8 +247,8 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
                 - Add MoviesIMDB objects to JList
             */
             if("Open".equals(command)) {
-                List<File> sub_folders = new ArrayList(); // We want to store complete subfolder paths in ArrayList-container.
-                List<String> movie_names = new ArrayList(); // We want to store parsed folder names in ArrayList-container.
+                List<File> sub_folders; 
+                List<String> movie_names; 
 
                 File folderPath = FileChooser(new JFileChooser()); // FileChooser for movie-folder
                 if(folderPath != null) {
@@ -295,6 +282,7 @@ public class MovieInfoGUI implements ActionListener, ItemListener {
     }
     
     MouseListener mouseListener = new MouseAdapter() {
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1) {
            MoviesIMDB movie = (MoviesIMDB)list.getSelectedValue();

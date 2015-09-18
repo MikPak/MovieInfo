@@ -29,7 +29,7 @@ public class FileNameParser {
     /*  getFolders(String directoryName) lists subfolders of a given folder, 
         returns ArrayList containing absolute path for each subfolder.*/
     public List<File> getFolders(File directoryPath) {
-        List<File> resultList = new ArrayList<File>(); // Using ArrayList to store subfolders
+        List<File> resultList = new ArrayList<>(); // Using ArrayList to store subfolders
         
         // List all files from folder
         File[] files = directoryPath.listFiles();
@@ -54,8 +54,7 @@ public class FileNameParser {
     
     /* Returns File-object from data-file */
     public File getFolderPathFromMemory() throws IOException, ClassNotFoundException {
-        File path2 = new File("default");
-
+        File path2;
         try {
            FileInputStream fis = new FileInputStream("path.dat");
                 ObjectInputStream ois = new ObjectInputStream(fis);
